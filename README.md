@@ -5,3 +5,4 @@ Praticar a programação e tecnologias de desenvolvimento.
 ## Linguagens
 * C
 * Python
+* JavaScript
