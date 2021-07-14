@@ -1,4 +1,15 @@
 #include <stdio.h>
+
+typedef struct{
+    char login;
+    char senha;
+    char nome;
+    int id;
+
+}acesso;
+
+
+
 int main(){
     printf(" ______________________\n");
     printf("|                      |\n");
@@ -13,9 +24,6 @@ int main(){
     printf("|                      |\n");
     printf("|                      |\n");
     printf("|______________________|\n");
-
-    
-    
 
     return 0;
 }
