@@ -3,4 +3,5 @@ Um simples gerenciador de senhas para aqueles que tem péssima memória ou para 
 ## Objetivos
 Praticar a programação e tecnologias de desenvolvimento.
 ## Linguagens
-Linguagem de Programação - C, Python
+* C
+* Python
