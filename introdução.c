@@ -25,8 +25,5 @@ int main(){
     printf("|                      |\n");
     printf("|______________________|\n");
 
-    
-    
-
     return 0;
 }
