@@ -13,10 +13,7 @@ typedef struct{
 
 }acesso;
 
-
 void gravar_funcao(acesso estrutura){
-
-    
 
     arq = fopen("dados.bin", "ab");
     if (arq == NULL)
@@ -45,7 +42,6 @@ void gravar_funcao(acesso estrutura){
 
 void ler_funcao(acesso ler){
 
-
     arq = fopen("dados.bin", "rb");
     if (arq == NULL)
     {
@@ -60,13 +56,13 @@ void ler_funcao(acesso ler){
         printf("Login: %s\n", ler.login);
         printf("Senha: %s\n\n", ler.senha);
     }
+
     printf("Total de senhas salvas: %d\n\n", i);
     printf("Pressione qualquer tecla para voltar ao menu Iniciar\n\n");
         getch();
         system("cls");
     
     fclose(arq);
-
 }
 
 void modificar_funcao(acesso modificar){
@@ -106,14 +102,7 @@ void modificar_funcao(acesso modificar){
     printf("Pressione qualquer tecla para voltar ao menu Iniciar\n");
     getch();
     system("cls");
-
-    
-
-    
-
-
 }
-
 
 int main(){
     int a;
@@ -123,7 +112,6 @@ int main(){
 
 while (a != 0){
 
-    
     printf("Escolha a opcao desejada\n\n");
     printf("1: Guardar senhas\n");
     printf("2: Ver senhas salvas\n");
@@ -152,7 +140,7 @@ while (a != 0){
         break;
     
     case 4:
-    printf("Em breve.\n");
+    printf("Disponivel na proxima atualizacao\n");
     Sleep(1500);
     system("cls");
         break;
@@ -164,12 +152,9 @@ while (a != 0){
         break;
     }
 
-    
     } if (a == 0){
     printf("Ate breve!\n\n");
-    printf("Fechando...\n");
     Sleep(1000);
-    
     }
 
     return 0;
