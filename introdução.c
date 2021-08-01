@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include <conio.h>
 #include <time.h>
-#include <windows.h>
+#include <stdlib.h>
+
 
 FILE *arq;
 
@@ -22,33 +22,37 @@ void gravar_funcao(acesso estrutura){
         return ;
     }
 
-    printf("Ola! vamos iniciar\n\n");
-    printf("Identificador:\n");
+    printf("\n\n");
+    printf("\033[32mIdentificador:\033[m\n");
     scanf("%s", estrutura.nome);
-    printf("Login:\n");
-    scanf("%s", &estrutura.login);
-    printf("Senha:\n");
-    scanf("%s", estrutura.senha);
+    printf("\033[32mLogin:\033[m\n");
+    scanf("%s", estrutura.login);
+    printf("\033[32mSenha:\033[m\n");
+    scanf("%s%*c", estrutura.senha);
 
     fwrite(&estrutura, sizeof(acesso),1, arq);
 
     fclose(arq);
 
-    printf("\nDados Salvos com sucesso!\n\n");
-    printf("Pressione qualquer tecla para voltar ao menu Iniciar");
-    getch();
-    system("cls");
+    printf("\n\033[32mDados Salvos com sucesso!\033[m\n\n");
+    printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n");
+    getchar();
+    printf("\e[H\e[2J");
+    
 }
 
 void ler_funcao(acesso ler){
+    
 
     arq = fopen("dados.bin", "rb");
     if (arq == NULL)
     {
         printf("Nao foi possivel ler dados.\n");
+        return;
     }
 
     int i = 0;
+    printf("\n\n");
     while (fread(&ler, sizeof(acesso), 1, arq))
     {
         i++;
@@ -58,11 +62,11 @@ void ler_funcao(acesso ler){
     }
 
     printf("Total de senhas salvas: %d\n\n", i);
-    printf("Pressione qualquer tecla para voltar ao menu Iniciar\n\n");
-        getch();
-        system("cls");
-    
+    printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n\n");
+        
     fclose(arq);
+    getchar();
+    printf("\e[H\e[2J");
 }
 
 void modificar_funcao(acesso modificar){
@@ -71,9 +75,11 @@ void modificar_funcao(acesso modificar){
     if (arq == NULL)
     {
         printf("Nao foi possivel ler dados.\n");
+        return;
     }
 
     int i = 0;
+    printf("\n\n");
     while (fread(&modificar, sizeof(acesso), 1, arq))
     {
         i++;
@@ -93,68 +99,153 @@ void modificar_funcao(acesso modificar){
     printf("Novo login:\n");
     scanf("%s", modificar.login);
     printf("Nova senha:\n");
-    scanf("%s", modificar.senha);
+    scanf("%s%*c", modificar.senha);
     fseek(arq, (ind *sizeof(acesso)), SEEK_SET);
     fwrite(&modificar, sizeof(acesso),1 , arq);
 
     fclose(arq);
-    printf("\n\nDados alterados com sucesso!\n\n");
-    printf("Pressione qualquer tecla para voltar ao menu Iniciar\n");
-    getch();
-    system("cls");
+    printf("\n\n\033[32mDados alterados com sucesso!\033[m\n\n");
+    printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n");
+    getchar();
+    printf("\e[H\e[2J");
+
+    
+    
+}
+
+char gerador_senha(char vetor[], int n_char){
+    int i, c;
+    printf("Opções de senhas:\n");
+    printf("[1]-> Apenas números\n");
+    printf("[2]-> Apenas Letras Maiúsculas\n");
+    printf("[3]-> Apenas Letras Minúsculas\n");
+    printf("[4]-> Letras Maiúsc. + Minúsc.\n");
+    printf("[5]-> Letras + Números\n");
+    printf("[6]-> Letras + Números + Caracteres especiais\n");
+    int choice;
+    scanf("%d%*c",&choice);
+    switch(choice){
+        case 1:
+            for(i=0;i<n_char;i++){
+                vetor[i] = '0'+(char)(rand()%10);
+            }
+                break;
+        case 2:
+            for(i=0;i<n_char;i++){
+                vetor[i] = 'A'+(char)(rand()%26);
+            }
+                break;
+        case 3:
+            for(i=0;i<n_char;i++){
+                vetor[i] = 'a'+(char)(rand()%26);
+            }
+                break;
+        case 4:
+            i = 0;
+            while(i <= n_char){
+                
+                c = 'A' +(int)(rand()%57);
+                if((65<=c)&&(c<=90) || (97<=c)&&(c<=122)){
+                    
+                    vetor[i] = (char)c;
+                    i++;
+                }
+                
+            }
+            break;
+        case 5:
+            i = 0;
+            
+            while(i <= n_char){
+                c = '0' +(int)(rand()%57);
+                if((48<=c)&&(c<=57) || (65<=c) && (c<=90) || (97<=c)&&(c<=122)){
+                    
+                    vetor[i] = (char)c;
+                    i++;
+                }
+                
+            }
+            break;
+        case 6:
+            for(i=0;i<n_char;i++){
+                vetor[i] = '!'+(char)(rand()%93);
+            }
+                break;
+            
+}
+
+}
+void show_senha(char vetor[], int n_char){
+    int i;
+    printf("SENHA GERADA:\n\033[32m");
+    for(i=0;i<n_char;i++){
+        printf("%c",vetor[i]);
+    }
+    printf("\033[m");
+    getchar();
+    printf("\e[H\e[2J");
 }
 
 int main(){
-    int a;
+    int a, controler = 1;
     acesso gravar_main;
 
     printf("\nBem vindo ao Gerenciador de Senhas V1.0\n\n");
 
-while (a != 0){
+    while (controler){
 
-    printf("Escolha a opcao desejada\n\n");
-    printf("1: Guardar senhas\n");
-    printf("2: Ver senhas salvas\n");
-    printf("3: Editar senhas\n");
-    printf("4: Excluir senhas\n");
-    printf("5: Gerar senha\n");
-    printf("0: Sair\n");
-    scanf("%d%*c", &a);
-    system("cls");
-    printf("\n\nOpcao selecionada %d: Carregando...\n", a);
-    Sleep(1000); // pra da um efeito de carregamento dos dados
-    system("cls");
+        printf("Escolha a opcao desejada\n\n");
+        printf("1: Guardar senhas\n");
+        printf("2: Ver senhas salvas\n");
+        printf("3: Editar senhas\n");
+        printf("4: Excluir senhas\n");
+        printf("5: Gerar senha\n");
+        printf("0: Sair\n");
+        scanf("%d%*c", &a);
+        printf("\e[H\e[2J");
+        
+        printf("\n\nOpcao selecionada %d", a);
+        
+        
 
-    switch (a)
-    {
-    case 1:
-        gravar_funcao(gravar_main);
-        break;
-    
-    case 2:
-    ler_funcao(gravar_main);
-        break;
-    
-    case 3:
-    modificar_funcao(gravar_main);
-        break;
-    
-    case 4:
-    printf("Disponivel na proxima atualizacao\n");
-    Sleep(1500);
-    system("cls");
-        break;
+        switch(a)
+        {
+            case 0:
+                controler = 0;
+                printf("\nAté a próxima \xF0\x9F\x98\x98\n");
+                break;
+            case 1:
+                gravar_funcao(gravar_main);
+                break;
+            
+            case 2:
+            ler_funcao(gravar_main);
+                break;
+            
+            case 3:
+            modificar_funcao(gravar_main);
+                break;
+            
+            case 4:
+            printf("Disponivel na proxima atualizacao\n");
+            
+            
+                break;
 
-    case 5:
-    printf("Disponivel na proxima atualizacao\n");
-    Sleep(1500);
-    system("cls");
-        break;
-    }
+            case 5:
+                printf(" ");
+                int n;
+                char vet[n];
+                printf("Quantos caracteres?\n");
+                scanf("%d",&n);
+                srand((unsigned)time(NULL));
+                gerador_senha(vet,n);
+                show_senha(vet,n);
+                
+                break;
+            
+        }
 
-    } if (a == 0){
-    printf("Ate breve!\n\n");
-    Sleep(1000);
     }
 
     return 0;
