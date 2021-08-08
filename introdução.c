@@ -186,6 +186,39 @@ void show_senha(char vetor[], int n_char){
     printf("\e[H\e[2J");
 }
 
+void deletar(acesso senha){
+    int size = 0,i,s_delete;
+    arq = fopen("dados.bin","r");
+    while (fread(&senha,sizeof(acesso),1,arq))
+    {
+        printf("\nIdentificador %d: %s\n",size+1, senha.nome);
+        printf("Login: %s\n", senha.login);
+        printf("Senha: %s\n\n", senha.senha);
+        size++;
+    }
+    fclose(arq);
+    acesso lista_senha[size];
+    arq = fopen("dados.bin","rb");
+    for(i=0;i<size;i++){
+        fread(&lista_senha[i],sizeof(acesso),1,arq);
+    }
+    fclose(arq);
+    printf("\n\033[31mDigite a senha que voce deseja apagar:\033[m ");
+    scanf("%d%*c",&s_delete);
+    s_delete--;
+    arq = fopen("dados.bin","wb");
+    for(i=0;i<size;i++){
+        if(i!=s_delete){
+            fwrite(&lista_senha[i],sizeof(acesso),1,arq);
+        }
+    }
+    printf("\nSenha apagada!");
+    printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n");
+    getchar();
+    printf("\e[H\e[2J");
+
+    fclose(arq);
+}
 int main(){
     int a, controler = 1;
     acesso gravar_main;
@@ -227,7 +260,7 @@ int main(){
                 break;
             
             case 4:
-            printf("Disponivel na proxima atualizacao\n");
+            deletar(gravar_main);
             
             
                 break;
