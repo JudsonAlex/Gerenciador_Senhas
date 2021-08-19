@@ -2,7 +2,11 @@
 #include <time.h>
 #include <stdlib.h>
 
+
+
+
 FILE *arq;
+
 
 typedef struct{
     char login[30];
@@ -25,11 +29,11 @@ void gravar_funcao(acesso estrutura){
 
     printf("\n\n");
     printf("\033[32mIdentificador:\033[m\n");
-    scanf("%s", estrutura.nome);
+    scanf("%[^\n]%*c", estrutura.nome);
     printf("\033[32mLogin:\033[m\n");
-    scanf("%s", estrutura.login);
+    scanf("%[^\n]%*c", estrutura.login);
     printf("\033[32mSenha:\033[m\n");
-    scanf("%s%*c", estrutura.senha);
+    scanf("%[^\n]%*c", estrutura.senha);
 
     fwrite(&estrutura, sizeof(acesso),1, arq);
 
@@ -53,9 +57,9 @@ void ler_funcao(acesso ler){
     while (fread(&ler, sizeof(acesso), 1, arq))
     {
         i++;
-        printf("Identificador %d: %s\n",i, ler.nome);
-        printf("Login: %s\n", ler.login);
-        printf("Senha: %s\n\n", ler.senha);
+        printf("Identificador \033[1;34m%d\033[m: \033[33m%s\n\033[m",i, ler.nome);
+        printf("Login: \033[33m%s\n\033[m", ler.login);
+        printf("Senha: \033[33m%s\n\n\033[m", ler.senha);
     } 
     if (i == 0)
     {
@@ -67,7 +71,7 @@ void ler_funcao(acesso ler){
     }
     
 
-    printf("Total de senhas salvas: %d\n\n", i);
+    printf("Total de senhas salvas: \033[1;34m%d\033[m\n\n", i);
     printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n\n");
         
     fclose(arq);
@@ -91,9 +95,9 @@ void modificar_funcao(acesso modificar){
     while (fread(&modificar, sizeof(acesso), 1, arq))
     {
         i++;
-        printf("Identificador %d: %s\n",i, modificar.nome);
-        printf("Login: %s\n", modificar.login);
-        printf("Senha: %s\n\n", modificar.senha);
+        printf("Identificador \033[1;34m%d\033[m: \033[33m%s\033[m\n",i, modificar.nome);
+        printf("Login: \033[33m%s\033[m\n", modificar.login);
+        printf("Senha: \033[33m%s\033[m\n\n", modificar.senha);
     }
     if (i == 0)
     {
@@ -104,19 +108,21 @@ void modificar_funcao(acesso modificar){
         return;
     } else
     
-    printf("Total de senhas salvas: %d\n\n", i);
+    printf("Total de senhas salvas: \033[1;34m%d\033[m\n\n", i);
 
     int ind = 0;
 
-    printf("Escolha o numero da senha que deseja alterar:\n");
+    printf("Escolha o numero da senha que deseja alterar: ");
     scanf("%d%*c", &ind);
-    ind--;
+    if (ind > 0 && ind <= i)
+    {
+        ind--;
     printf("Novo Indentificador\n");
-    scanf("%s", modificar.nome);
+    scanf("%[^\n]%*c", modificar.nome);
     printf("Novo login:\n");
-    scanf("%s", modificar.login);
+    scanf("%[^\n]%*c", modificar.login);
     printf("Nova senha:\n");
-    scanf("%s%*c", modificar.senha);
+    scanf("%[^\n]%*c", modificar.senha);
     fseek(arq, (ind *sizeof(acesso)), SEEK_SET);
     fwrite(&modificar, sizeof(acesso),1 , arq);
 
@@ -125,6 +131,16 @@ void modificar_funcao(acesso modificar){
     printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n");
     getchar();
     printf("\e[H\e[2J");
+
+    } else
+    {
+        printf("\n\033[31mNumero da senha incorreta!\n\n\033[m");
+        printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n");
+        getchar();
+        printf("\e[H\e[2J");
+
+    }
+    
 
     
     
@@ -194,7 +210,7 @@ char gerador_senha(char vetor[], int n_char){
 }
 void show_senha(char vetor[], int n_char){
     int i;
-    printf("SENHA GERADA:\n\033[32m");
+    printf("\nSENHA GERADA:\n\033[32m");
     for(i=0;i<n_char;i++){
         printf("%c",vetor[i]);
     }
@@ -217,9 +233,9 @@ void deletar(acesso senha){
     
     while (fread(&senha,sizeof(acesso),1,arq))
     {
-        printf("\nIdentificador %d: %s\n",size+1, senha.nome);
-        printf("Login: %s\n", senha.login);
-        printf("Senha: %s\n\n", senha.senha);
+        printf("\nIdentificador \033[1;34m%d\033[m: \033[33m%s\033[m\n",size+1, senha.nome);
+        printf("Login: \033[33m%s\033[m\n", senha.login);
+        printf("Senha: \033[33m%s\033[m\n\n", senha.senha);
         size++;
     }
     if (size == 0)
@@ -240,26 +256,42 @@ void deletar(acesso senha){
     fclose(arq);
     printf("\n\033[31mDigite a senha que voce deseja apagar:\033[m ");
     scanf("%d%*c",&s_delete);
-    s_delete--;
+
+    if (s_delete > 0 && s_delete <= i)
+    {
+        s_delete--;
     arq = fopen("dados.bin","wb");
     for(i=0;i<size;i++){
         if(i!=s_delete){
             fwrite(&lista_senha[i],sizeof(acesso),1,arq);
         }
     }
-    printf("\nSenha apagada!\n");
+    printf("\nSenha apagada!\n\n");
     printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n");
     getchar();
     printf("\e[H\e[2J");
 
     fclose(arq);
+    } else
+    {
+        printf("\n\033[31mNumero da senha incorreta!\n\n\033[m");
+        printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n");
+        getchar();
+        printf("\e[H\e[2J");
+    
+    }
+    
 }
 
 int main(){
+
+   
+
     int a, controler = 1;
     acesso gravar_main;
 
-    printf("\nBem vindo ao Gerenciador de Senhas V1.4\n\n");
+    system("title Gerenciador de Senhas V1.4");
+    printf("\n\033[7;34m Bem vindo ao Gerenciador de Senhas V1.4 \033[m\n\n");
     int n;
     char vet[n];
     char decisao;
@@ -287,7 +319,7 @@ int main(){
             do
             {
                 gravar_funcao(gravar_main);
-                printf("Adicionar nova senha? S/N\n");
+                printf("\nAdicionar nova senha? S/N\n");
                 scanf("%c%*c", &decisao);
                 printf("\e[H\e[2J");
                 if (decisao == 'n' || decisao == 'N')
@@ -325,7 +357,7 @@ int main(){
             
             case 6:
             
-                printf("Criado com muito amor por:\nRodrigo Soares\nJudson Alexsander\n\n");
+                printf("Criado com muito amor por:\n\n\033[34mRodrigo Soares\033[m\n\033[36mJudson Alexsander\n\n\033[m");
                 printf("Pressione \033[33mENTER\033[m para voltar ao menu Iniciar\n\n");
                 getchar();
                 printf("\e[H\e[2J");
